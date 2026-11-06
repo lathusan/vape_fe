@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/* Dark mode is driven by a `.dark` class on <html> (set by ThemeProvider) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   DESIGN TOKENS
+   Every colour in the app comes from these variables, so light/dark mode and
+   the colour palettes switch instantly with no component changes.
+   --------------------------------------------------------------------------- */
+:root {
+  /* Palette: "ocean" (default). Other palettes override these 3 below. */
+  --brand-base: #2f6bff;
+  --brand-2-base: #00b8f0;
+  --accent-base: #7af0d0;
+
+  /* Neutrals (light) */
+  --paper: #f4f5f8;
+  --surface: #ffffff;
+  --line: #e4e6ec;
+  --ink: #0c0e14;
+  --muted: #6a6f7d;
+  --on-ink: #ffffff;
+  --night: #0b0d14; /* always-dark sections (hero, footer) */
+  --art-mix: 100%;
+
+  --brand: var(--brand-base);
+  --brand-2: var(--brand-2-base);
+  --accent: var(--accent-base);
+  --brand-soft: color-mix(in oklab, var(--brand-base) 11%, var(--surface));
+  --on-brand: #ffffff;
+  --on-accent: #0c0e14;
+
+  --success: #12a150;
+  --warn: #d48806;
+  --danger: #e5484d;
+
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #07080c;
+  --surface: #11131a;
+  --line: #22252f;
+  --ink: #eef0f5;
+  --muted: #8d93a3;
+  --on-ink: #0c0e14;
+  --night: #0e1118;
+  --art-mix: 22%;
+
+  --brand: color-mix(in oklab, var(--brand-base) 85%, white);
+  --brand-soft: color-mix(in oklab, var(--brand-base) 20%, var(--surface));
+
+  --success: #3ddc84;
+  --warn: #f5b83d;
+  --danger: #ff6369;
+
+  color-scheme: dark;
+}
+
+/* Colour palettes (user can pick one from the theme menu) */
+[data-palette="violet"] { --brand-base: #6d5bff; --brand-2-base: #b05cff; --accent-base: #c8f031; }
+[data-palette="emerald"] { --brand-base: #0d9668; --brand-2-base: #2fd39a; --accent-base: #d4f78a; }
+[data-palette="sunset"] { --brand-base: #f0532d; --brand-2-base: #ff9a3c; --accent-base: #ffd36b; }
+[data-palette="rose"] { --brand-base: #e0336e; --brand-2-base: #ff7a9f; --accent-base: #ffc6d9; }
+[data-palette="mono"] { --brand-base: #3a3f4b; --brand-2-base: #6b7280; --accent-base: #e5e7eb; }
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-on-ink: var(--on-ink);
+  --color-night: var(--night);
+  --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-feature-settings: "ss01", "cv11";
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Soft brand glow behind the whole app */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, color-mix(in oklab, var(--brand-base) 12%, transparent), transparent 70%),
+    radial-gradient(40rem 26rem at -5% 10%, color-mix(in oklab, var(--brand-2-base) 9%, transparent), transparent 70%);
+}
+
+/* Brand gradient helpers */
+.bg-brand-gradient {
+  background-image: linear-gradient(135deg, var(--brand-base), var(--brand-2-base));
+}
+.text-brand-gradient {
+  background-image: linear-gradient(90deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Subtle elevation used by cards */
+.shadow-soft {
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -12px rgb(16 24 40 / 0.08);
+}
+.dark .shadow-soft {
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Hide scrollbar for horizontal chip rows */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* Bottom safe area for mobile tab bars */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-rise { animation: rise 0.35s ease-out both; }
+
+@keyframes slide-in {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+.animate-slide-in { animation: slide-in 0.25s ease-out both; }
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.animate-slide-in-right { animation: slide-in-right 0.25s ease-out both; }
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+.animate-slide-up { animation: slide-up 0.28s ease-out both; }
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.animate-pop { animation: pop 0.16s ease-out both; }
+
+/* Gradient sidebar (follows the colour theme) */
+.bg-sidebar {
+  background:
+    radial-gradient(18rem 18rem at 110% 0%, color-mix(in oklab, var(--brand-2-base) 55%, transparent), transparent 70%),
+    radial-gradient(14rem 14rem at -20% 100%, color-mix(in oklab, var(--brand-2-base) 35%, transparent), transparent 70%),
+    linear-gradient(170deg, color-mix(in oklab, var(--brand-base) 92%, black) 0%, color-mix(in oklab, var(--brand-base) 50%, #070722) 100%);
+}
+.dark .bg-sidebar {
+  background:
+    radial-gradient(18rem 18rem at 110% 0%, color-mix(in oklab, var(--brand-2-base) 35%, transparent), transparent 70%),
+    linear-gradient(170deg, color-mix(in oklab, var(--brand-base) 55%, #0a0b14) 0%, #0b0c16 100%);
+}
